@@ -36,6 +36,10 @@ type CreateVNICDetails struct {
 	SubnetId            *string                           `mapstructure:"subnet_id" required:"false"`
 }
 
+type shapeConfig struct {
+	Ocpus *float32 `mapstructure:"ocpus" required:"false"`
+}
+
 type ListImagesRequest struct {
 	// fields that can be specified under "base_image_filter"
 	CompartmentId          *string `mapstructure:"compartment_id"`
@@ -91,7 +95,9 @@ type Config struct {
 	InstanceTags        map[string]string                 `mapstructure:"instance_tags"`
 	InstanceDefinedTags map[string]map[string]interface{} `mapstructure:"instance_defined_tags"`
 	Shape               string                            `mapstructure:"shape"`
-	BootVolumeSizeInGBs int64                             `mapstructure:"disk_size"`
+	ShapeConfig         shapeConfig                       `mapstructure:"shape_config"`
+
+	BootVolumeSizeInGBs int64 `mapstructure:"disk_size"`
 
 	// Metadata optionally contains custom metadata key/value pairs provided in the
 	// configuration. While this can be used to set metadata["user_data"] the explicit

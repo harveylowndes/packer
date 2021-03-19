@@ -95,6 +95,10 @@ func (d *driverOCI) CreateInstance(ctx context.Context, publicKey string) (strin
 		FreeformTags:        d.cfg.CreateVnicDetails.FreeformTags,
 	}
 
+	LaunchInstanceShapeConfigDetails := core.LaunchInstanceShapeConfigDetails{
+		Ocpus: d.cfg.ShapeConfig.Ocpus,
+	}
+
 	// Determine base image ID
 	var imageId *string
 	if d.cfg.BaseImageID != "" {
@@ -154,8 +158,10 @@ func (d *driverOCI) CreateInstance(ctx context.Context, publicKey string) (strin
 		DisplayName:        d.cfg.InstanceName,
 		FreeformTags:       d.cfg.InstanceTags,
 		Shape:              &d.cfg.Shape,
-		SourceDetails:      InstanceSourceDetails,
-		Metadata:           metadata,
+		ShapeConfig:        &LaunchInstanceShapeConfigDetails,
+
+		SourceDetails: InstanceSourceDetails,
+		Metadata:      metadata,
 	}
 
 	instance, err := d.computeClient.LaunchInstance(context.TODO(), core.LaunchInstanceRequest{
