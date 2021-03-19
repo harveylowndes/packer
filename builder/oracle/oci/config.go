@@ -19,8 +19,8 @@ import (
 	"github.com/hashicorp/packer-plugin-sdk/pathing"
 	"github.com/hashicorp/packer-plugin-sdk/template/config"
 	"github.com/hashicorp/packer-plugin-sdk/template/interpolate"
-	ocicommon "github.com/oracle/oci-go-sdk/common"
-	ociauth "github.com/oracle/oci-go-sdk/common/auth"
+	ocicommon "github.com/oracle/oci-go-sdk/v36/common"
+	ociauth "github.com/oracle/oci-go-sdk/v36/common/auth"
 )
 
 type CreateVNICDetails struct {
@@ -37,7 +37,8 @@ type CreateVNICDetails struct {
 }
 
 type shapeConfig struct {
-	Ocpus *float32 `mapstructure:"ocpus" required:"false"`
+	Ocpus       *float32 `mapstructure:"ocpus" required:"false"`
+	MemoryInGBs *float32 `mapstructure:"memoryInGBs" required:"false"`
 }
 
 type ListImagesRequest struct {
@@ -228,7 +229,7 @@ func (c *Config) Prepare(raws ...interface{}) error {
 		}
 
 		providers := []ocicommon.ConfigurationProvider{
-			NewRawConfigurationProvider(c.TenancyID, c.UserID, c.Region, c.Fingerprint, string(keyContent), &c.PassPhrase),
+			ocicommon.NewRawConfigurationProvider(c.TenancyID, c.UserID, c.Region, c.Fingerprint, string(keyContent), &c.PassPhrase),
 		}
 
 		if fileProvider != nil {
@@ -259,7 +260,7 @@ func (c *Config) Prepare(raws ...interface{}) error {
 
 		if _, err := configProvider.PrivateRSAKey(); err != nil {
 			errs = packersdk.MultiErrorAppend(
-				errs, errors.New("'key_file' must be specified"))
+				errs, fmt.Errorf("'key_file' must be correctly specified. %w", err))
 		}
 
 		c.configProvider = configProvider
